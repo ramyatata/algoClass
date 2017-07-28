@@ -45,34 +45,82 @@ stack values - (first)2-5-7-3-6-9(last)
 myStack.until(7)
 => 4
 What's the time complexity?
-
-
-
- */
+*/
 
 function Stack(capacity) {
-  // implement me...
+    this._storage = {};
+    this._count = 0;
+    this._capacity = capacity || Infinity;
 }
 
 Stack.prototype.push = function(value) {
-  // implement me...
+    if (this._count <= this._capacity) {
+        this._storage[this._count] = value;
+        this._count++;
+        return this._count;
+    } else {
+        return 'Max capacity already reached. Remove element before adding a new one.';
+    }
 };
-// Time complexity:
+// Time complexity: O(1)
 
 Stack.prototype.pop = function() {
-  // implement me...
+    if (this._count) {
+        this._count--;
+        var deletedValue = this._storage[this._count];
+        delete this._storage[this._count];
+        return deletedValue;
+    } else {
+        return 'Stack is empty';
+    }
 };
-// Time complexity:
+// Time complexity: O(1)
 
 Stack.prototype.peek = function() {
   // implement me...
+    if (this._count) {
+        return this._storage[this._count];
+    } else {
+        return 'empty stack';
+    }
 };
-// Time complexity:
+// Time complexity: O(1)
 
 Stack.prototype.count = function() {
-  // implement me...
+    return this._count;
 };
-// Time complexity:
+// Time complexity: O(1)
+
+Stack.prototype.contains = function (value) {
+    for (var keys in this._storage) {
+        if (this._storage[keys] === value) {
+            return true;
+        }
+    }
+    return false;
+};
+// Time complexity: O(n)
+
+Stack.prototype.until = function (value) {
+    var pops = 0
+
+    function compare(pops, index, value) {
+        pops++;
+        if (this.storage[index] === value) {
+            return pops;
+        } 
+        if (index < 0) {
+            return 'not Found';
+        }
+        return compare(pops, --index, value);
+    }
+
+    return compare(pops, this._count - 1, value);
+};
+//Time complexity : O(n)
+
+
+
 
 
 /*
@@ -93,3 +141,67 @@ You are given three towers (stacks) and N disks, each of different size. You can
    3. no disk can be placed on top of a disk that is smaller than it
 The disks begin on tower#1. Write a function that will move the disks from tower#1 to tower#3 in such a way that none of the constraints are violated.
  */
+
+
+function MinStack(capacity) {
+    this._storage = {};
+    this._capacity = capacity || Infinity;
+    this._count = 0;
+    this._min = new Stack();
+}
+MinStack.prototype.push = function (value) {
+    if (this._count <= this._capacity) {
+        if (this._count === 0) {
+            this._min.push(value);
+        } else {
+            if (this._min.peek() > value) {
+                this._min.push(value);
+            } else {
+                this._min.push(this._min.peek());
+            }
+        }
+        this._storage[this._count] = value;
+        this._count++;
+        return this._count++;
+    }
+};
+MinStack.prototype.pop = function () {
+    if (this._count) {
+        this.count--;
+        var deletedVal = this._storage[this._count];
+        delete this._storage[this._count];
+        this._min.pop();
+        return deletedVal;
+    } else {
+        return 'empty stack';
+    }
+};
+MinStack.prototype.size = function () {
+    return this._count;
+};
+MinStack.prototype.min = function () {
+    return this._min.peek();
+};
+//Time Complexity - O(1)
+MinStack.prototype.peek = function () {
+    return this._storage[this._count - 1];
+};
+
+function balancedParens(string) {
+    var paranthesis = new Stack();
+    for (var i = 0; i < string.length; i++){
+        var current = string[i];
+        if (current === '(' || current === '{' || current === '[') {
+            paranthesis.push(current);
+        } else if (current === ')' || current === '}' || current === ']'){
+            var peek = paranthesis.peek();
+            if ((peek === ')' && current === '(') || (peek === '}' && current === '{') || (peek === ']' && current === '[')){
+                paranthesis.pop();
+            }
+        }
+    }
+
+    return paranthesis.size === 0;
+}
+//TimeComplexity - O(n)
+
